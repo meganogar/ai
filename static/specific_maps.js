@@ -1,4 +1,4 @@
-var DPLA_API = 'YOUR API HERE'
+var DPLA_API = YOUR_API_HERE
 
 var map;
 function myMap() {
@@ -7,10 +7,15 @@ function myMap() {
         center:new google.maps.LatLng(47.6062, -122.3321),
         zoom:1,
     };
+    // Set the initial map that loads when the application starts
     map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
 }
 
 function calculateCenter(min, max) {
+    /*! Calcuate the Center from bounding box for each geocode object.
+    Need to pass this result to getCollections so I can set a default pin for
+    collection items that don't have a coordinates field under spatial.
+    */
     const difference = max - min
     return min + difference
 }
@@ -22,6 +27,8 @@ async function getCityMap() {
     var longitude;
     var city = document.getElementById('city-name').value;
     var infowindow = new google.maps.InfoWindow({});
+
+    // Geocode returns the coordinates for city typed into input field.
     await geocoder.geocode( { 'address': city}, function(results, status) {
         if (status == 'OK') {
             latitude = calculateCenter(results[0].geometry.bounds.wb.lo, results[0].geometry.bounds.wb.hi);
@@ -34,15 +41,19 @@ async function getCityMap() {
             longitude = 0;
         }
     })
+
+    // Get collection items for city typed into input field.
     await getCollections(city, latitude, longitude, infowindow);
 }
 
 async function getCollections(city, lt, lg, infowindow) {
-    /*! Queries all collections for destination city and populates teh markers on the map */
+    /*! Queries all collections for destination city and populates the markers on the map */
     let response = await fetch('https://api.dp.la/v2/items?sourceResource.spatial='+city+'&page_size=500&api_key='+DPLA_API);
     let data = await response.json();
     var markers = [];
     var count = 0;
+
+    // Iterate through response object to add a map pin for each collection item.
     Object.entries(data.docs).forEach(([key, value]) => {
         if (value.sourceResource.spatial[0].coordinates) {
             var coordinates = value.sourceResource.spatial[0].coordinates.split(", ");
