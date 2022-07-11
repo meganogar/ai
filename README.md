@@ -27,7 +27,7 @@ This web app framework was built using Flask, an application for Python.  In ord
 ### DPLA
 Access to the Digital Public Libraries of America Collections by City catalog requires a DPLA API key.  In order to run the application locally, you will need to register your own API key and include this script in your static/specific_map.js file:
 ​​ 
-`<script src="https://maps.googleapis.com/maps/api/js?key=API_KEY_HERE"></script>`
+`var DPLA_API = YOUR_API_HERE`
  
 - Get a DPLA API key: https://pro.dp.la/developers/policies#get-a-key 
 
